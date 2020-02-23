@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shop.mapper.ProdMapper">
+ 
+
+
+
+
+
+ 	<resultMap id="Product" type="shop.bean.product.ProductVO">
+ 		<id property="prodId" column="prod_id"></id>
+  		<collection property="introImg" ofType="String" select="getIntroImg" column="prodId=prod_id"></collection>
+  		<collection property="prodImg" ofType="String" select="getProdImg" column="prodId=prod_id"></collection>
+		<collection property="propertyList" ofType="shop.bean.Property" select="getProdPropertyList" column="prodId=prod_id"></collection>
+ 	</resultMap>
+ 
+ 	<select id="getProduct" resultMap="Product">
+ 		select a.prod_id,state,`name`,a.img_src as prodImgSrc,min(price) as min_price,max(price)as maxPrice
+ 		from tbl_product  as a left join tbl_sku as b on a.prod_id=b.prod_id
+ 		where a.prod_id=#{prodId}
+ 	</select>
+
+ 	<select id="getSkuPropertyList" resultType="shop.bean.Property">
+		select `name`,`value`
+		from tbl_sku_property
+		where prod_id=#{prodId}
+	</select>
+
+	<select id="getProdPropertyList" resultType="shop.bean.Property">
+		select `name`,`value`
+		from tbl_prod_property
+		where prod_id=#{prodId}
+	</select>
+
+ 	<select id="getIntroImg" resultType="String">
+ 		select img_src 
+ 		from tbl_intro_image
+ 		where prod_id=#{prodId}
+ 	</select>
+ 	
+ 	<select id="getProdImg" resultType="String">
+ 		select img_src 
+ 		from tbl_product_image
+ 		where prod_id=#{prodId} 	
+ 	</select>
+ 	
+ 	<select id="getSpecs" resultType="shop.bean.product.Sku">
+ 		select spec_id,specs,specs_value,price,stock
+ 		from tbl_spces
+ 		where prod_id=#{prodId}
+ 	</select> 	
+ 	
+ 	<select id="getAllProdId" resultType="Integer">
+ 		select prod_id from tbl_product;
+ 	</select>
+ 	
+	
+ 	<select id="getProdState" resultType="String">
+        select state from tbl_product where prod_id = #{prodId}
+    </select> 	
+ 	
+ 	<select id="getProdStateList" resultType="String">
+ 		select state from tbl_product
+ 		where prod_id in
+	  	<foreach item="prodId" collection="list" 
+	         	 	open="(" separator="," close=")">
+	         #{prodId}
+	  	</foreach>
+ 	</select>
+ 	
+    <select id="selectCountOfProdId" resultType="int">
+    	select count(prod_id) from tbl_product
+    	where prod_id in
+	  	<foreach item="prodId" collection="list" 
+	         	 	open="(" separator="," close=")">
+	         #{prodId}
+	  	</foreach>
+    </select>
+
+ 	<select id="selectSku" resultType="HashMap">
+
+	</select>
+<!--  
+    <select id="getPrdoName" resultType="String">
+        select name from tbl_product where prod_id = #{prodId}
+    </select>
+     
+    
+    
+    <update id="changeProdState">
+    	update tbl_prodcut set state=#{state} where prod_id=#{prodId}
+    </update>
+    
+    
+    
+    <delete id="deleteProdIntroImg">
+    	delete from tbl_intro_image where prod_id=#{prodId}
+    </delete>
+    
+    
+    
+    <insert id="addProd"  useGeneratedKeys="true"  keyProperty="prod_id">
+        insert into tbl_product (prod_id,state,name,img_src,specs_list,property)
+        values (#{id},#{state},#{name},#{prodImgSrc},#{specsList},#{property});
+    </insert>
+    
+    <insert id="addIntroImage"  useGeneratedKeys="true"  keyProperty="inim_id">
+    	insert into tbl_intro_image(prod_id,img_src)
+    	values(#{prodId},#{prodImgSrc})
+    </insert>
+    
+    -->	
+    
+</mapper>

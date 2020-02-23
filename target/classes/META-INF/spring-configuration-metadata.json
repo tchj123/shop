@@ -1,0 +1,47 @@
+{
+  "groups": [
+    {
+      "name": "alipay",
+      "type": "shop.bean.alipay.AlipayProperties",
+      "sourceType": "shop.bean.alipay.AlipayProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "alipay.a-l-i-p-a-y-p-u-b-l-i-c-k-e-y",
+      "type": "java.lang.String",
+      "sourceType": "shop.bean.alipay.AlipayProperties"
+    },
+    {
+      "name": "alipay.a-p-p-i-d",
+      "type": "java.lang.String",
+      "sourceType": "shop.bean.alipay.AlipayProperties"
+    },
+    {
+      "name": "alipay.a-p-p-p-r-i-v-a-t-e-k-e-y",
+      "type": "java.lang.String",
+      "sourceType": "shop.bean.alipay.AlipayProperties"
+    },
+    {
+      "name": "alipay.c-h-a-r-s-e-t",
+      "type": "java.lang.String",
+      "sourceType": "shop.bean.alipay.AlipayProperties"
+    },
+    {
+      "name": "alipay.f-o-r-m-a-t",
+      "type": "java.lang.String",
+      "sourceType": "shop.bean.alipay.AlipayProperties"
+    },
+    {
+      "name": "alipay.s-i-g-n-t-y-p-e",
+      "type": "java.lang.String",
+      "sourceType": "shop.bean.alipay.AlipayProperties"
+    },
+    {
+      "name": "alipay.u-r-l",
+      "type": "java.lang.String",
+      "sourceType": "shop.bean.alipay.AlipayProperties"
+    }
+  ],
+  "hints": []
+}

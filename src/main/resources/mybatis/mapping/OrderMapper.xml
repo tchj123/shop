@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shop.mapper.OrderMapper">
+
+	<insert id="insertOrder" useGeneratedKeys="true"
+		keyProperty="orderId">
+		insert into tbl_Order
+		(orde_no,state,user_id,total_num,prod_amount,order_amount,address,`name`,telephone,pay_channel)
+		values(#{orderNo},#{state,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
+		#{userId},#{totalNum},#{prodAmount},#{orderAmount},#{address},#{name},#{telephone},#{payChannel});
+	</insert>
+
+
+
+	<insert id="insertOrderItem">
+		insert into tbl_order_item
+		(orde_id,orde_no,prod_id,prod_name,prod_num,sku_id,sku_value_list,prod_price)
+		values
+		<foreach item="item" collection="list" separator=",">
+			(#{item.orderId},#{item.orderNo},#{item.prodId},#{item.prodName},#{item.prodNum},
+			#{item.skuId},#{item.skuValueList},#{item.prodPrice})
+		</foreach>
+	</insert>
+
+	<select id="getOrderAmount" resultType="Integer">
+		select order_amount
+		from tbl_order
+		where user_id=#{userId} and orde_no=#{orderNo}
+	</select>
+
+	<update id="orderPaied">
+		update tbl_order set pay_no=#{payNo},
+		state=#{state,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}
+		where orde_no=#{orderNo}
+	</update>
+
+	<select id="hasOrder" resultType="boolean">
+		select orde_no
+		from tbl_order
+		where orde_no=#{orderNo} and order_amount=#{orderAmount}
+	</select>
+
+	<update id="orderCanceld">
+		update tbl_order set state=#{state, typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}
+		where orde_no=#{orderNo} and user_id=#{userId}
+	</update>
+
+
+
+	<resultMap id="OrderState" type="shop.bean.order.OrderState">
+		<result property="state" column="state" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"></result>
+	</resultMap>
+
+	<select id="getOrderState" resultMap="OrderState">
+		select state from tbl_order
+		where orde_no=#{orderNo}
+	</select>
+
+
+
+	<resultMap id="OrderVO" type="shop.bean.order.OrderVO">
+		<id property="orderId" column="orde_id"></id>
+		<id property="orderNo" column="orde_no"></id>
+		<result property="state" column="state" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"></result>
+		<collection property="orderItemVOList"  column="orderNo=orde_no" 
+			ofType="shop.bean.order.OrderItemVO" select="getOrderItemVO">
+		</collection>
+	</resultMap>
+	
+	<select id="getOrderVOList" resultMap="OrderVO">
+		select orde_id ,orde_no,total_num,order_amount,state,gmt_create as create_time
+		from tbl_order
+		where user_id=#{userId} 		
+		<if test="state!=null">
+			and state=#{state, typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}
+		</if>
+		<if test="page>0">
+			limit
+			${(page-1)*onePageNum},${page*onePageNum}
+		</if>
+		<if test="page==0">
+			limit
+			${0},${onePageNum}
+		</if>
+	</select>
+
+	<select id="getOrderItemVO"
+		resultType="shop.bean.order.OrderItemVO">
+		select prod_price,prod_name,prod_num as num,sku_value_list,prod_img
+		from tbl_order_item
+		where orde_no=#{orderNo};
+	</select>
+	
+	<select id="getCountOfOrder" resultType="int">
+		select
+		COALESCE(count(orde_id),0) from tbl_order
+		where user_id=#{userId} 
+		<if test="state!=null">
+			and state=#{state, typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}
+		</if>
+	</select>
+
+	<select id="getOrderDO" resultType="shop.bean.order.OrderDO">
+		select orde_id as orderId,orde_no as orderNo,total_num,prod_amount,order_amount,address,telephone
+		from tbl_order
+		where orde_no=#{orderNo} and user_id=#{userId}
+	</select>
+</mapper>

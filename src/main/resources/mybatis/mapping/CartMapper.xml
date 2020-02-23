@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shop.mapper.CartMapper">
+ 
+	<select id="getAllCartItemList" resultType="shop.bean.cart.CartItemVO">
+		select cart_id,a.prod_id,a.sku_id,num,state as prodState,price ,name as prodName,sku_value_list
+		from tbl_cart a left join tbl_product b on a.prod_id=b.prod_id left join tbl_sku c on a.sku_id=c.sku_id
+		where user_id=#{userId}
+	</select>
+
+	<select id="getCartItemList" resultType="shop.bean.cart.CartItemVO">
+		select cart_id,a.prod_id,a.sku_id,num,state as prodState,price ,name as prodName,sku_value_list
+		from tbl_cart a left join tbl_product b on a.prod_id=b.prod_id left join tbl_sku c on a.sku_id=c.sku_id
+		where user_id=#{userId} and cart_id in
+		<foreach item="cartId" collection="cartItemIdList"
+				 open="(" separator="," close=")">
+			#{cartId}
+		</foreach>
+	</select>
+
+	<select id="getCartItemId" resultType="Integer">
+		select cart_id
+		from tbl_cart
+		where user_id=#{userId} and sku_id=#{skuId}
+	</select>
+
+
+
+
+	<insert id="addProduct" useGeneratedKeys="true"  keyProperty="cartId">
+		insert into tbl_cart (user_id,prod_id,sku_id,num)
+		values(#{userId},#{prodId},#{skuId},#{num});
+	</insert>
+
+
+	<delete id="deleteProduct">
+		delete from tbl_cart 
+		where user_Id=#{userId} and cart_id=#{cartId}
+	</delete>
+
+	<delete id="deleteProductList">
+		delete from tbl_cart
+		where user_id=#{userId} and cart_id in
+		<foreach collection="skuIdList" item="cartId"
+				 open="(" close=")" separator=",">
+			#{cartId}
+		</foreach>
+	</delete>
+
+	<update id="changeNum">
+	update tbl_cart set num=#{num}
+	where user_id=#{userId} and cart_id=#{cartId}
+	</update>
+
+
+	<update id="addNum">
+	update tbl_cart set num=num+#{num}
+	where user_id=#{userId} and cart_id=#{cartId}
+
+
+	</update>
+	<update id="reduceNum">
+	update tbl_cart set num=min(num-#{num},1)
+	where user_id=#{userId} and cart_id=#{cartId}
+	</update>
+
+</mapper>

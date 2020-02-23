@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shop.mapper.SkuMapper">
+ 
+	<update id="reduceStock">
+		update tbl_specs set stock=stock-#{num}
+		where spec_id =#{specsId} and stock-#{num}>=0;
+	</update> 
+	
+	<select id="selectStockForUpdate" resultType="Integer">
+		select stock from tbl_specs
+		where spec_id=#{specsId} for update
+	</select>
+	
+	<select id="getPriceList" resultType="Integer">
+ 		select price from tbl_specs
+ 		where spec_id in
+	  	<foreach item="specsId" collection="list" 
+	  		open="(" separator="," close=")">
+	         #{specsId}
+	  	</foreach>
+ 	</select>
+
+	<select id="getSkuList" resultType="shop.bean.product.Sku">
+		select sku_id,stock,price,img_src
+		from tbl_sku
+		where prod_id=#{prodId}
+	</select>
+
+	<select id="getSkprIdList" resultType="Integer">
+		select skpr_id
+		from tbl_sku_relation
+		where sku_id=#{skuId}
+	</select>
+
+	<select id="getSkuPropertyList" resultType="shop.bean.product.SkuProperty">
+		select `name`,`value`,skpr_id
+		from tbl_sku_property
+		where prod_id=#{prodId}
+	</select>
+</mapper>

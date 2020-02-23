@@ -1,0 +1,5 @@
+package shop.bean.user;
+
+public enum RegisterState {
+	SUCCESS,FAIL,USERNAME_REPEATED,PASSWORD_INVALID,VERFICATION_CODE_INVALID;
+}
